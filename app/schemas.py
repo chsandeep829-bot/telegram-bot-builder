@@ -20,12 +20,8 @@ class UserResponse(BaseModel):
 
     from pydantic import ConfigDict
 
-class UserResponse(BaseModel):
-    id: int
-    username: str
-    email: str
-
-    model_config = ConfigDict(from_attributes=True)
+class Config:
+    orm_mode = True
 
 
 class BotCreateSchema(BaseModel):
