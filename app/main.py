@@ -1,9 +1,6 @@
-# app/main.py
-
 from fastapi import FastAPI
 
-from app.database import Base
-from app.database import engine
+from app.database import Base, engine
 
 from app.api.auth import router as auth_router
 from app.api.users import router as users_router
@@ -23,6 +20,12 @@ try:
     from app.api.subscriptions import router as subscriptions_router
 except Exception:
     subscriptions_router = None
+
+# Telegram webhook router
+try:
+    from app.api.telegram_webhook import router as telegram_router
+except Exception:
+    telegram_router = None
 
 
 Base.metadata.create_all(bind=engine)
@@ -52,6 +55,7 @@ async def health():
     }
 
 
+# Include routers
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(bots_router)
@@ -64,6 +68,9 @@ if admin_router:
 
 if subscriptions_router:
     app.include_router(subscriptions_router)
+
+if telegram_router:
+    app.include_router(telegram_router)
 
 
 @app.on_event("startup")
